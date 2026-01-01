@@ -510,6 +510,12 @@ if uploaded_file is not None:
                 
                 # Check if solve button was clicked
                 if solve_button:
+                    # Clear previous solution and switch to locations view
+                    st.session_state.solution_data = None
+                    st.session_state.solution_json = None
+                    st.session_state.solution_html = None
+                    st.session_state.current_view = 'locations'
+                    
                     # Validate time window
                     if time_window_end <= time_window_start:
                         st.error("❌ End time must be after start time!")
