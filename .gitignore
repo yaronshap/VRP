@@ -52,6 +52,10 @@ vrptw_demo.ipynb
 solve_vrptw.py
 vrptw_solver_colab.py
 
+# Local run scripts (not needed for Streamlit Cloud)
+run_app.bat
+run_app.sh
+
 # Streamlit local cache
 .streamlit/
 
