@@ -239,17 +239,17 @@ if uploaded_file is not None:
             st.rerun()
 
     with col2:
-        if st.sidebar.button("📝 Example 2", use_container_width=True, help="30 locations, 30-min service"):
+        if st.sidebar.button("📝 Example 2", use_container_width=True, help="5 vehicles, all locations, 2-min service"):
             st.session_state.num_vehicles = 5
-            st.session_state.vehicle_capacity = 8
-            st.session_state.service_time = 30
+            st.session_state.vehicle_capacity = 200
+            st.session_state.service_time = 2
             st.session_state.tw_start_hour = 9
             st.session_state.tw_start_min = 0
             st.session_state.tw_duration_hours = 8  # 9am to 5pm = 8 hours
             st.session_state.tw_duration_mins = 0
             st.session_state.avg_speed_mph = 30
-            st.session_state.max_runtime = 30
-            st.session_state.num_locations = 30
+            st.session_state.max_runtime = 60
+            st.session_state.num_locations = 0
             st.session_state.params_set = True
             st.rerun()
 
