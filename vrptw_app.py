@@ -185,7 +185,7 @@ if uploaded_file is not None:
     
     st.sidebar.info(f"⏰ Total Duration: {duration_text}")
 
-    st.sidebar.subheader("🎯 Optimization Settings")
+    # Average speed (for travel time calculations)
     avg_speed_mph = st.sidebar.slider(
         "Average Speed (mph)",
         min_value=10,
@@ -194,6 +194,7 @@ if uploaded_file is not None:
         help="Average driving speed for travel time calculations"
     )
 
+    st.sidebar.subheader("🎯 Optimization Settings")
     max_runtime = st.sidebar.slider(
         "Max Solving Time (seconds)",
         min_value=10,
