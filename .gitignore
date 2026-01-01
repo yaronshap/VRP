@@ -31,6 +31,8 @@ visualize_haversine.py
 # Documentation (keep only main README)
 README_HOTELS.md
 README_COLAB.md
+README_STREAMLIT.md
+README_VRPTW.md
 GRID_SEARCH_EXPLAINED.md
 IMPLEMENTATION_SUMMARY.md
 
