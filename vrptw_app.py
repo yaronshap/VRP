@@ -222,10 +222,25 @@ if uploaded_file is not None:
     # Preset buttons at bottom of sidebar
     st.sidebar.subheader("📋 Load Preset Parameters")
 
+    # First button - Question 2.2, 1+2
+    if st.sidebar.button("Question 2.2, 1+2", use_container_width=True, help="Single vehicle, 50 locations, 2-min service"):
+        st.session_state.num_vehicles = 1
+        st.session_state.vehicle_capacity = 200
+        st.session_state.service_time = 2
+        st.session_state.tw_start_hour = 9
+        st.session_state.tw_start_min = 0
+        st.session_state.tw_duration_hours = 8  # 9am to 5pm = 8 hours
+        st.session_state.tw_duration_mins = 0
+        st.session_state.avg_speed_mph = 30
+        st.session_state.max_runtime = 60
+        st.session_state.num_locations = 50
+        st.session_state.params_set = True
+        st.rerun()
+
     col1, col2 = st.sidebar.columns(2)
     with col1:
-        if st.sidebar.button("📝 Example 1", use_container_width=True, help="Single vehicle, 50 locations, 2-min service"):
-            st.session_state.num_vehicles = 1
+        if st.sidebar.button("Question 2.2 3 (5 cars)", use_container_width=True, help="5 vehicles, all locations, 2-min service"):
+            st.session_state.num_vehicles = 5
             st.session_state.vehicle_capacity = 200
             st.session_state.service_time = 2
             st.session_state.tw_start_hour = 9
@@ -234,13 +249,13 @@ if uploaded_file is not None:
             st.session_state.tw_duration_mins = 0
             st.session_state.avg_speed_mph = 30
             st.session_state.max_runtime = 60
-            st.session_state.num_locations = 50
+            st.session_state.num_locations = 0
             st.session_state.params_set = True
             st.rerun()
 
     with col2:
-        if st.sidebar.button("📝 Example 2", use_container_width=True, help="5 vehicles, all locations, 2-min service"):
-            st.session_state.num_vehicles = 5
+        if st.sidebar.button("Question 2.2 3 (2 cars)", use_container_width=True, help="2 vehicles, all locations, 2-min service"):
+            st.session_state.num_vehicles = 2
             st.session_state.vehicle_capacity = 200
             st.session_state.service_time = 2
             st.session_state.tw_start_hour = 9
