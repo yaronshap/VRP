@@ -1,11 +1,11 @@
 """
 VRPTW Solver - Streamlit App
 Interactive web application for solving Vehicle Routing Problems with Time Windows
-Version: 1.0.8
+Version: 1.0.9
 """
 
 # App version
-APP_VERSION = "1.0.8"
+APP_VERSION = "1.0.9"
 
 import streamlit as st
 import pandas as pd
@@ -249,6 +249,12 @@ if uploaded_file is not None:
     if st.sidebar.button("Question 2.2, 1+2", use_container_width=True, help="Single vehicle, 50 locations, 2-min service"):
         from datetime import time
         
+        # Clear solution and switch to locations view
+        st.session_state.solution_data = None
+        st.session_state.solution_json = None
+        st.session_state.solution_html = None
+        st.session_state.current_view = 'locations'
+        
         # Clear widget keys so they can be reset
         for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
                     'tw_duration_hours', 'tw_duration_mins', 'avg_speed_mph', 'max_runtime', 'num_locations']:
@@ -275,6 +281,12 @@ if uploaded_file is not None:
         if st.sidebar.button("Question 2.2 3 (5 cars)", use_container_width=True, help="5 vehicles, all locations, 2-min service"):
             from datetime import time
             
+            # Clear solution and switch to locations view
+            st.session_state.solution_data = None
+            st.session_state.solution_json = None
+            st.session_state.solution_html = None
+            st.session_state.current_view = 'locations'
+            
             # Clear widget keys so they can be reset
             for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
                         'tw_duration_hours', 'tw_duration_mins', 'avg_speed_mph', 'max_runtime', 'num_locations']:
@@ -299,6 +311,12 @@ if uploaded_file is not None:
     with col2:
         if st.sidebar.button("Question 2.2 3 (2 cars)", use_container_width=True, help="2 vehicles, all locations, 2-min service"):
             from datetime import time
+            
+            # Clear solution and switch to locations view
+            st.session_state.solution_data = None
+            st.session_state.solution_json = None
+            st.session_state.solution_html = None
+            st.session_state.current_view = 'locations'
             
             # Clear widget keys so they can be reset
             for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
