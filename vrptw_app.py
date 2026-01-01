@@ -224,6 +224,9 @@ if uploaded_file is not None:
 
     # First button - Question 2.2, 1+2
     if st.sidebar.button("Question 2.2, 1+2", use_container_width=True, help="Single vehicle, 50 locations, 2-min service"):
+        # Delete the widget key so it picks up the new value
+        if 'num_locs_input' in st.session_state:
+            del st.session_state['num_locs_input']
         st.session_state.num_vehicles = 1
         st.session_state.vehicle_capacity = 200
         st.session_state.service_time = 2
@@ -240,6 +243,9 @@ if uploaded_file is not None:
     col1, col2 = st.sidebar.columns(2)
     with col1:
         if st.sidebar.button("Question 2.2 3 (5 cars)", use_container_width=True, help="5 vehicles, all locations, 2-min service"):
+            # Delete the widget key so it picks up the new value
+            if 'num_locs_input' in st.session_state:
+                del st.session_state['num_locs_input']
             st.session_state.num_vehicles = 5
             st.session_state.vehicle_capacity = 200
             st.session_state.service_time = 2
@@ -255,6 +261,9 @@ if uploaded_file is not None:
 
     with col2:
         if st.sidebar.button("Question 2.2 3 (2 cars)", use_container_width=True, help="2 vehicles, all locations, 2-min service"):
+            # Delete the widget key so it picks up the new value
+            if 'num_locs_input' in st.session_state:
+                del st.session_state['num_locs_input']
             st.session_state.num_vehicles = 2
             st.session_state.vehicle_capacity = 200
             st.session_state.service_time = 2
