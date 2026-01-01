@@ -1,11 +1,11 @@
 """
 VRPTW Solver - Streamlit App
 Interactive web application for solving Vehicle Routing Problems with Time Windows
-Version: 1.0.4
+Version: 1.0.5
 """
 
 # App version
-APP_VERSION = "1.0.4"
+APP_VERSION = "1.0.5"
 
 import streamlit as st
 import pandas as pd
@@ -119,18 +119,18 @@ if uploaded_file is not None:
         min_value=1,
         max_value=100,
         value=st.session_state.get('num_vehicles', 5),
-        help="Total number of available vehicles"
+        help="Total number of available vehicles",
+        key='num_vehicles'
     )
-    st.session_state.num_vehicles = num_vehicles
 
     vehicle_capacity = st.sidebar.number_input(
         "Vehicle Capacity (customers)",
         min_value=1,
         max_value=200,
         value=st.session_state.get('vehicle_capacity', 99),
-        help="Maximum number of customers each vehicle can serve"
+        help="Maximum number of customers each vehicle can serve",
+        key='vehicle_capacity'
     )
-    st.session_state.vehicle_capacity = vehicle_capacity
 
     st.sidebar.subheader("⏰ Time Settings")
     service_time = st.sidebar.number_input(
@@ -138,9 +138,9 @@ if uploaded_file is not None:
         min_value=1,
         max_value=240,
         value=st.session_state.get('service_time', 60),
-        help="Time spent at each customer location"
+        help="Time spent at each customer location",
+        key='service_time'
     )
-    st.session_state.service_time = service_time
 
     # Time window inputs using time_input widget
     st.sidebar.markdown("**Time Window:**")
@@ -158,10 +158,11 @@ if uploaded_file is not None:
     tw_start = st.sidebar.time_input(
         "Start Time",
         value=time(default_start_hour, default_start_min),
-        help="Earliest time vehicles can start servicing customers"
+        help="Earliest time vehicles can start servicing customers",
+        key='tw_start_time'
     )
     
-    # Update session state with widget value
+    # Update session state from widget
     st.session_state.tw_start_hour = tw_start.hour
     st.session_state.tw_start_min = tw_start.minute
 
@@ -174,7 +175,8 @@ if uploaded_file is not None:
             min_value=0,
             max_value=168,  # Up to 7 days
             value=default_duration_hours,
-            help="Hours from start time"
+            help="Hours from start time",
+            key='tw_duration_hours'
         )
     with col2:
         duration_mins = st.number_input(
@@ -182,12 +184,9 @@ if uploaded_file is not None:
             min_value=0,
             max_value=59,
             value=default_duration_mins,
-            help="Minutes from start time"
+            help="Minutes from start time",
+            key='tw_duration_mins'
         )
-    
-    # Store duration in session state
-    st.session_state.tw_duration_hours = duration_hours
-    st.session_state.tw_duration_mins = duration_mins
     
     # Calculate end time (can span multiple days)
     time_window_start = tw_start.hour * 60 + tw_start.minute
@@ -213,9 +212,9 @@ if uploaded_file is not None:
         min_value=10,
         max_value=70,
         value=st.session_state.get('avg_speed_mph', 30),
-        help="Average driving speed for travel time calculations"
+        help="Average driving speed for travel time calculations",
+        key='avg_speed_mph'
     )
-    st.session_state.avg_speed_mph = avg_speed_mph
 
     st.sidebar.subheader("🎯 Optimization Settings")
     max_runtime = st.sidebar.slider(
@@ -223,9 +222,9 @@ if uploaded_file is not None:
         min_value=10,
         max_value=300,
         value=st.session_state.get('max_runtime', 60),
-        help="Maximum time allowed for optimization"
+        help="Maximum time allowed for optimization",
+        key='max_runtime'
     )
-    st.session_state.max_runtime = max_runtime
 
     st.sidebar.markdown("---")
 
@@ -248,6 +247,12 @@ if uploaded_file is not None:
 
     # First button - Question 2.2, 1+2
     if st.sidebar.button("Question 2.2, 1+2", use_container_width=True, help="Single vehicle, 50 locations, 2-min service"):
+        # Clear widget keys so they can be reset
+        for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
+                    'tw_duration_hours', 'tw_duration_mins', 'avg_speed_mph', 'max_runtime']:
+            if key in st.session_state:
+                del st.session_state[key]
+        
         # Set all parameters
         st.session_state.num_vehicles = 1
         st.session_state.vehicle_capacity = 200
@@ -265,6 +270,12 @@ if uploaded_file is not None:
     col1, col2 = st.sidebar.columns(2)
     with col1:
         if st.sidebar.button("Question 2.2 3 (5 cars)", use_container_width=True, help="5 vehicles, all locations, 2-min service"):
+            # Clear widget keys so they can be reset
+            for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
+                        'tw_duration_hours', 'tw_duration_mins', 'avg_speed_mph', 'max_runtime']:
+                if key in st.session_state:
+                    del st.session_state[key]
+            
             # Set all parameters
             st.session_state.num_vehicles = 5
             st.session_state.vehicle_capacity = 200
@@ -281,6 +292,12 @@ if uploaded_file is not None:
 
     with col2:
         if st.sidebar.button("Question 2.2 3 (2 cars)", use_container_width=True, help="2 vehicles, all locations, 2-min service"):
+            # Clear widget keys so they can be reset
+            for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
+                        'tw_duration_hours', 'tw_duration_mins', 'avg_speed_mph', 'max_runtime']:
+                if key in st.session_state:
+                    del st.session_state[key]
+            
             # Set all parameters
             st.session_state.num_vehicles = 2
             st.session_state.vehicle_capacity = 200
