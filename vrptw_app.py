@@ -1,11 +1,11 @@
 """
 VRPTW Solver - Streamlit App
 Interactive web application for solving Vehicle Routing Problems with Time Windows
-Version: 1.0.7
+Version: 1.0.8
 """
 
 # App version
-APP_VERSION = "1.0.7"
+APP_VERSION = "1.0.8"
 
 import streamlit as st
 import pandas as pd
@@ -262,8 +262,8 @@ if uploaded_file is not None:
         st.session_state.tw_start_hour = 9
         st.session_state.tw_start_min = 0
         st.session_state.tw_start_time = time(9, 0)  # Set time object for widget
-        st.session_state.tw_duration_hours = 8
-        st.session_state.tw_duration_mins = 0
+        st.session_state.tw_duration_hours = 7
+        st.session_state.tw_duration_mins = 30
         st.session_state.avg_speed_mph = 30
         st.session_state.max_runtime = 60
         st.session_state.num_locations = 50
@@ -288,8 +288,8 @@ if uploaded_file is not None:
             st.session_state.tw_start_hour = 9
             st.session_state.tw_start_min = 0
             st.session_state.tw_start_time = time(9, 0)  # Set time object for widget
-            st.session_state.tw_duration_hours = 8
-            st.session_state.tw_duration_mins = 0
+            st.session_state.tw_duration_hours = 7
+            st.session_state.tw_duration_mins = 30
             st.session_state.avg_speed_mph = 30
             st.session_state.max_runtime = 60
             st.session_state.num_locations = 0
@@ -313,8 +313,8 @@ if uploaded_file is not None:
             st.session_state.tw_start_hour = 9
             st.session_state.tw_start_min = 0
             st.session_state.tw_start_time = time(9, 0)  # Set time object for widget
-            st.session_state.tw_duration_hours = 8
-            st.session_state.tw_duration_mins = 0
+            st.session_state.tw_duration_hours = 7
+            st.session_state.tw_duration_mins = 30
             st.session_state.avg_speed_mph = 30
             st.session_state.max_runtime = 60
             st.session_state.num_locations = 0
