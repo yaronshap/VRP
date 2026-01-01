@@ -1,11 +1,11 @@
 """
 VRPTW Solver - Streamlit App
 Interactive web application for solving Vehicle Routing Problems with Time Windows
-Version: 1.0.3
+Version: 1.0.4
 """
 
 # App version
-APP_VERSION = "1.0.3"
+APP_VERSION = "1.0.4"
 
 import streamlit as st
 import pandas as pd
@@ -121,6 +121,7 @@ if uploaded_file is not None:
         value=st.session_state.get('num_vehicles', 5),
         help="Total number of available vehicles"
     )
+    st.session_state.num_vehicles = num_vehicles
 
     vehicle_capacity = st.sidebar.number_input(
         "Vehicle Capacity (customers)",
@@ -129,6 +130,7 @@ if uploaded_file is not None:
         value=st.session_state.get('vehicle_capacity', 99),
         help="Maximum number of customers each vehicle can serve"
     )
+    st.session_state.vehicle_capacity = vehicle_capacity
 
     st.sidebar.subheader("⏰ Time Settings")
     service_time = st.sidebar.number_input(
@@ -138,6 +140,7 @@ if uploaded_file is not None:
         value=st.session_state.get('service_time', 60),
         help="Time spent at each customer location"
     )
+    st.session_state.service_time = service_time
 
     # Time window inputs using time_input widget
     st.sidebar.markdown("**Time Window:**")
@@ -157,6 +160,10 @@ if uploaded_file is not None:
         value=time(default_start_hour, default_start_min),
         help="Earliest time vehicles can start servicing customers"
     )
+    
+    # Update session state with widget value
+    st.session_state.tw_start_hour = tw_start.hour
+    st.session_state.tw_start_min = tw_start.minute
 
     # Duration inputs (allows multi-day windows)
     st.sidebar.markdown("**Duration from Start:**")
@@ -208,6 +215,7 @@ if uploaded_file is not None:
         value=st.session_state.get('avg_speed_mph', 30),
         help="Average driving speed for travel time calculations"
     )
+    st.session_state.avg_speed_mph = avg_speed_mph
 
     st.sidebar.subheader("🎯 Optimization Settings")
     max_runtime = st.sidebar.slider(
@@ -217,6 +225,7 @@ if uploaded_file is not None:
         value=st.session_state.get('max_runtime', 60),
         help="Maximum time allowed for optimization"
     )
+    st.session_state.max_runtime = max_runtime
 
     st.sidebar.markdown("---")
 
