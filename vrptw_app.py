@@ -1,11 +1,11 @@
 """
 VRPTW Solver - Streamlit App
 Interactive web application for solving Vehicle Routing Problems with Time Windows
-Version: 1.0.2
+Version: 1.0.3
 """
 
 # App version
-APP_VERSION = "1.0.2"
+APP_VERSION = "1.0.3"
 
 import streamlit as st
 import pandas as pd
@@ -167,8 +167,7 @@ if uploaded_file is not None:
             min_value=0,
             max_value=168,  # Up to 7 days
             value=default_duration_hours,
-            help="Hours from start time",
-            key="duration_h"
+            help="Hours from start time"
         )
     with col2:
         duration_mins = st.number_input(
@@ -176,8 +175,7 @@ if uploaded_file is not None:
             min_value=0,
             max_value=59,
             value=default_duration_mins,
-            help="Minutes from start time",
-            key="duration_m"
+            help="Minutes from start time"
         )
     
     # Store duration in session state
@@ -241,12 +239,13 @@ if uploaded_file is not None:
 
     # First button - Question 2.2, 1+2
     if st.sidebar.button("Question 2.2, 1+2", use_container_width=True, help="Single vehicle, 50 locations, 2-min service"):
+        # Set all parameters
         st.session_state.num_vehicles = 1
         st.session_state.vehicle_capacity = 200
         st.session_state.service_time = 2
         st.session_state.tw_start_hour = 9
         st.session_state.tw_start_min = 0
-        st.session_state.tw_duration_hours = 8  # 9am to 5pm = 8 hours
+        st.session_state.tw_duration_hours = 8
         st.session_state.tw_duration_mins = 0
         st.session_state.avg_speed_mph = 30
         st.session_state.max_runtime = 60
@@ -257,12 +256,13 @@ if uploaded_file is not None:
     col1, col2 = st.sidebar.columns(2)
     with col1:
         if st.sidebar.button("Question 2.2 3 (5 cars)", use_container_width=True, help="5 vehicles, all locations, 2-min service"):
+            # Set all parameters
             st.session_state.num_vehicles = 5
             st.session_state.vehicle_capacity = 200
             st.session_state.service_time = 2
             st.session_state.tw_start_hour = 9
             st.session_state.tw_start_min = 0
-            st.session_state.tw_duration_hours = 8  # 9am to 5pm = 8 hours
+            st.session_state.tw_duration_hours = 8
             st.session_state.tw_duration_mins = 0
             st.session_state.avg_speed_mph = 30
             st.session_state.max_runtime = 60
@@ -272,12 +272,13 @@ if uploaded_file is not None:
 
     with col2:
         if st.sidebar.button("Question 2.2 3 (2 cars)", use_container_width=True, help="2 vehicles, all locations, 2-min service"):
+            # Set all parameters
             st.session_state.num_vehicles = 2
             st.session_state.vehicle_capacity = 200
             st.session_state.service_time = 2
             st.session_state.tw_start_hour = 9
             st.session_state.tw_start_min = 0
-            st.session_state.tw_duration_hours = 8  # 9am to 5pm = 8 hours
+            st.session_state.tw_duration_hours = 8
             st.session_state.tw_duration_mins = 0
             st.session_state.avg_speed_mph = 30
             st.session_state.max_runtime = 60
