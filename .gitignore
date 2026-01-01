@@ -1,0 +1,67 @@
+# API Keys - NEVER commit these!
+GoogleMapsAPI.txt
+GoogleMapsAPI_test.txt
+.env
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Hotel Data Collection (not needed for Streamlit app)
+hotel_data/
+test_single_point.py
+test_single_point_results.json
+fetch_rochester_hotels.py
+add_rochester_center.py
+calculate_distances.py
+convert_to_csv.py
+create_filtered_dataset.py
+create_map.py
+simplify_csv.py
+visualize_haversine.py
+
+# Documentation (keep only main README)
+README_HOTELS.md
+README_COLAB.md
+GRID_SEARCH_EXPLAINED.md
+IMPLEMENTATION_SUMMARY.md
+
+# Example outputs and cases
+vrptw_*.html
+*_solution.html
+vrptw_*.json
+vrptw_*.png
+*_solution.json
+*_solution.png
+student_solution.*
+example_output.json
+cases/
+
+# Jupyter notebook (optional, can be included later)
+vrptw_demo.ipynb
+
+# Other scripts not needed for Streamlit
+solve_vrptw.py
+vrptw_solver_colab.py
+
+# Streamlit local cache
+.streamlit/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
