@@ -5,7 +5,7 @@ Version: 1.0.9
 """
 
 # App version
-APP_VERSION = "1.0.11"
+APP_VERSION = "1.0.12"
 
 import streamlit as st
 import pandas as pd
@@ -546,149 +546,157 @@ if uploaded_file is not None:
                     st.session_state.solution_json = None
                     st.session_state.solution_html = None
                     st.session_state.show_locations = False  # Hide location map when solving
+                    st.session_state.solving = True  # Mark that we're solving
+                    st.session_state.start_solving = True  # Flag to start solving after rerun
                     
                     # Validate time window
                     if time_window_end <= time_window_start:
                         st.error("❌ End time must be after start time!")
+                        st.session_state.solving = False
+                        st.session_state.start_solving = False
                     else:
-                        # Save uploaded file temporarily
-                        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, newline='') as tmp_file:
-                            df.to_csv(tmp_file.name, index=False)
-                            tmp_csv_path = tmp_file.name
+                        # Rerun to clear the display before starting optimization
+                        st.rerun()
+                
+                # Check if we should start solving (after rerun)
+                if st.session_state.get('start_solving', False):
+                    st.session_state.start_solving = False  # Reset flag
+                    
+                    # Save uploaded file temporarily
+                    with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, newline='') as tmp_file:
+                        df.to_csv(tmp_file.name, index=False)
+                        tmp_csv_path = tmp_file.name
+                    
+                    # Create temp files for outputs
+                    tmp_json = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+                    tmp_html = tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False)
+                    tmp_json.close()
+                    tmp_html.close()
+                    
+                    try:
+                        # Set solving state
+                        st.session_state.solving = True
                         
-                        # Create temp files for outputs
-                        tmp_json = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
-                        tmp_html = tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False)
-                        tmp_json.close()
-                        tmp_html.close()
+                        # Show status in sidebar
+                        status_placeholder.info("🔄 Optimizing routes... Please wait...")
                         
-                        try:
-                            # Set solving state
-                            st.session_state.solving = True
-                            
-                            # Show status in sidebar
-                            status_placeholder.info("🔄 Optimizing routes... Please wait...")
-                            
-                            # Progress bar
-                            progress_bar = progress_placeholder.progress(0)
-                            
-                            # Solve in a thread while updating progress
-                            import time
-                            import threading
-                            
-                            solution_result = [None]
-                            exception_result = [None]
-                            
-                            def solve_thread():
-                                try:
-                                    solution_result[0] = solve_vrptw(
-                                        csv_file=tmp_csv_path,
-                                        num_vehicles=num_vehicles,
-                                        vehicle_capacity=vehicle_capacity,
-                                        service_time=service_time,
-                                        time_window_start=time_window_start,
-                                        time_window_end=time_window_end,
-                                        avg_speed_mph=avg_speed_mph,
-                                        max_runtime=max_runtime,
-                                        output_json=tmp_json.name,
-                                        output_plot=tmp_html.name,
-                                        num_locations=num_locations if num_locations > 0 else None
-                                    )
-                                except Exception as e:
-                                    exception_result[0] = e
-                            
-                            # Start solving thread
-                            thread = threading.Thread(target=solve_thread)
-                            thread.start()
-                            
-                            # Update progress bar
-                            start_time = time.time()
-                            while thread.is_alive():
-                                elapsed = time.time() - start_time
-                                progress = min(elapsed / max_runtime, 0.99)
-                                progress_bar.progress(progress)
-                                time.sleep(0.1)
-                            
-                            thread.join()
-                            
-                            # Complete progress
-                            progress_bar.progress(1.0)
-                            
-                            # Check for exceptions
-                            if exception_result[0]:
-                                raise exception_result[0]
-                            
-                            solution = solution_result[0]
-                            
-                            # Clear status and progress
-                            status_placeholder.empty()
-                            progress_placeholder.empty()
-                            
-                            # Reset solving state
-                            st.session_state.solving = False
-                            
-                            # Check if solution is feasible
-                            if not solution['feasible']:
-                                # Show error in sidebar
-                                status_placeholder.error("❌ No solution found!")
-                                
-                                # Show detailed message in main area
-                                st.error("❌ No feasible solution found with current parameters!")
-                                
-                                # Calculate time window display values
-                                tw_start_h = time_window_start // 60
-                                tw_start_m = time_window_start % 60
-                                tw_end_h = time_window_end // 60
-                                tw_end_m = time_window_end % 60
-                                num_locs = len(df_display) if num_locations == 0 else num_locations
-                                
-                                st.markdown(f"""
-                                ### 💡 Suggestions to find a solution:
-                                - **Increase the number of vehicles** - More vehicles can handle more locations
-                                - **Increase vehicle capacity** - Each vehicle can serve more customers
-                                - **Extend the time window** - More time allows for longer routes
-                                - **Reduce service time** - Faster service means more customers can be visited
-                                - **Use fewer locations** - Reduce the problem size
-                                
-                                ### 📊 Current Parameters:
-                                - Vehicles: {num_vehicles}
-                                - Capacity: {vehicle_capacity} customers per vehicle
-                                - Service Time: {service_time} minutes
-                                - Time Window: {tw_start_h}h {tw_start_m}m to {tw_end_h}h {tw_end_m}m
-                                - Locations: {num_locs}
-                                """)
-                            else:
-                                # Store solution in session state
-                                st.session_state.solution_data = solution
-                                with open(tmp_html.name, 'r', encoding='utf-8') as f:
-                                    st.session_state.solution_html = f.read()
-                                with open(tmp_json.name, 'r') as f:
-                                    st.session_state.solution_json = f.read()
-                                
-                                # Switch to solution view
-                                st.session_state.current_view = 'solution'
-                                
-                                # Rerun to update the display
-                                st.rerun()
+                        # Progress bar
+                        progress_bar = progress_placeholder.progress(0)
                         
-                        except Exception as e:
-                            st.session_state.solving = False
-                            status_placeholder.empty()
-                            progress_placeholder.empty()
-                            st.error(f"❌ Error solving problem: {str(e)}")
+                        # Solve in a thread while updating progress
+                        import time
+                        import threading
                         
-                        finally:
-                            # Reset solving state and clear UI
-                            st.session_state.solving = False
-                            status_placeholder.empty()
-                            progress_placeholder.empty()
-                            # Cleanup temp files
+                        solution_result = [None]
+                        exception_result = [None]
+                        
+                        def solve_thread():
                             try:
-                                os.unlink(tmp_csv_path)
-                                os.unlink(tmp_json.name)
-                                os.unlink(tmp_html.name)
-                            except:
-                                pass
+                                solution_result[0] = solve_vrptw(
+                                    csv_file=tmp_csv_path,
+                                    num_vehicles=num_vehicles,
+                                    vehicle_capacity=vehicle_capacity,
+                                    service_time=service_time,
+                                    time_window_start=time_window_start,
+                                    time_window_end=time_window_end,
+                                    avg_speed_mph=avg_speed_mph,
+                                    max_runtime=max_runtime,
+                                    output_json=tmp_json.name,
+                                    output_plot=tmp_html.name,
+                                    num_locations=num_locations if num_locations > 0 else None
+                                )
+                            except Exception as e:
+                                exception_result[0] = e
+                        
+                        # Start solving thread
+                        thread = threading.Thread(target=solve_thread)
+                        thread.start()
+                        
+                        # Update progress bar
+                        start_time = time.time()
+                        while thread.is_alive():
+                            elapsed = time.time() - start_time
+                            progress = min(elapsed / max_runtime, 0.99)
+                            progress_bar.progress(progress)
+                            time.sleep(0.1)
+                        
+                        thread.join()
+                        
+                        # Complete progress
+                        progress_bar.progress(1.0)
+                        
+                        # Check for exceptions
+                        if exception_result[0]:
+                            raise exception_result[0]
+                        
+                        solution = solution_result[0]
+                        
+                        # Clear status and progress
+                        status_placeholder.empty()
+                        progress_placeholder.empty()
+                        
+                        # Reset solving state
+                        st.session_state.solving = False
+                        
+                        # Check if solution is feasible
+                        if not solution['feasible']:
+                            # Show error in sidebar
+                            status_placeholder.error("❌ No solution found!")
+                            
+                            # Show detailed message in main area
+                            st.error("❌ No feasible solution found with current parameters!")
+                            
+                            # Calculate time window display values
+                            tw_start_h = time_window_start // 60
+                            tw_start_m = time_window_start % 60
+                            tw_end_h = time_window_end // 60
+                            tw_end_m = time_window_end % 60
+                            num_locs = len(df_display) if num_locations == 0 else num_locations
+                            
+                            st.markdown(f"""
+                            ### 💡 Suggestions to find a solution:
+                            - **Increase the number of vehicles** - More vehicles can handle more locations
+                            - **Increase vehicle capacity** - Each vehicle can serve more customers
+                            - **Extend the time window** - More time allows for longer routes
+                            - **Reduce service time** - Faster service means more customers can be visited
+                            - **Use fewer locations** - Reduce the problem size
+                            
+                            ### 📊 Current Parameters:
+                            - Vehicles: {num_vehicles}
+                            - Capacity: {vehicle_capacity} customers per vehicle
+                            - Service Time: {service_time} minutes
+                            - Time Window: {tw_start_h}h {tw_start_m}m to {tw_end_h}h {tw_end_m}m
+                            - Locations: {num_locs}
+                            """)
+                        else:
+                            # Store solution in session state
+                            st.session_state.solution_data = solution
+                            with open(tmp_html.name, 'r', encoding='utf-8') as f:
+                                st.session_state.solution_html = f.read()
+                            with open(tmp_json.name, 'r') as f:
+                                st.session_state.solution_json = f.read()
+                            
+                            # Rerun to update the display with solution
+                            st.rerun()
+                    
+                    except Exception as e:
+                        st.session_state.solving = False
+                        status_placeholder.empty()
+                        progress_placeholder.empty()
+                        st.error(f"❌ Error solving problem: {str(e)}")
+                    
+                    finally:
+                        # Reset solving state and clear UI
+                        st.session_state.solving = False
+                        status_placeholder.empty()
+                        progress_placeholder.empty()
+                        # Cleanup temp files
+                        try:
+                            os.unlink(tmp_csv_path)
+                            os.unlink(tmp_json.name)
+                            os.unlink(tmp_html.name)
+                        except:
+                            pass
     
     except Exception as e:
         st.error(f"❌ Error loading CSV file: {str(e)}")
