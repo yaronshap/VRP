@@ -19,8 +19,8 @@ A web-based Vehicle Routing Problem with Time Windows (VRPTW) solver using PyVRP
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/vrptw-solver.git
-cd vrptw-solver
+git clone https://github.com/yaronshap/VRP.git
+cd VRP
 ```
 
 2. Create a virtual environment and install dependencies:
@@ -116,7 +116,8 @@ After solving, you can download:
 
 **Created by**: Yaron Shaposhnik  
 **Email**: yaron.shaposhnik@simon.rochester.edu  
-**Institution**: Simon Business School, University of Rochester
+**Institution**: Simon Business School, University of Rochester  
+**Repository**: https://github.com/yaronshap/VRP
 
 ## License
 
