@@ -1,11 +1,11 @@
 """
 VRPTW Solver - Streamlit App
 Interactive web application for solving Vehicle Routing Problems with Time Windows
-Version: 1.0.5
+Version: 1.0.6
 """
 
 # App version
-APP_VERSION = "1.0.5"
+APP_VERSION = "1.0.6"
 
 import streamlit as st
 import pandas as pd
@@ -249,11 +249,11 @@ if uploaded_file is not None:
     if st.sidebar.button("Question 2.2, 1+2", use_container_width=True, help="Single vehicle, 50 locations, 2-min service"):
         # Clear widget keys so they can be reset
         for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
-                    'tw_duration_hours', 'tw_duration_mins', 'avg_speed_mph', 'max_runtime']:
+                    'tw_duration_hours', 'tw_duration_mins', 'avg_speed_mph', 'max_runtime', 'num_locations']:
             if key in st.session_state:
                 del st.session_state[key]
         
-        # Set all parameters
+        # Set all parameters (including start time)
         st.session_state.num_vehicles = 1
         st.session_state.vehicle_capacity = 200
         st.session_state.service_time = 2
@@ -272,11 +272,11 @@ if uploaded_file is not None:
         if st.sidebar.button("Question 2.2 3 (5 cars)", use_container_width=True, help="5 vehicles, all locations, 2-min service"):
             # Clear widget keys so they can be reset
             for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
-                        'tw_duration_hours', 'tw_duration_mins', 'avg_speed_mph', 'max_runtime']:
+                        'tw_duration_hours', 'tw_duration_mins', 'avg_speed_mph', 'max_runtime', 'num_locations']:
                 if key in st.session_state:
                     del st.session_state[key]
             
-            # Set all parameters
+            # Set all parameters (including start time)
             st.session_state.num_vehicles = 5
             st.session_state.vehicle_capacity = 200
             st.session_state.service_time = 2
@@ -294,11 +294,11 @@ if uploaded_file is not None:
         if st.sidebar.button("Question 2.2 3 (2 cars)", use_container_width=True, help="2 vehicles, all locations, 2-min service"):
             # Clear widget keys so they can be reset
             for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
-                        'tw_duration_hours', 'tw_duration_mins', 'avg_speed_mph', 'max_runtime']:
+                        'tw_duration_hours', 'tw_duration_mins', 'avg_speed_mph', 'max_runtime', 'num_locations']:
                 if key in st.session_state:
                     del st.session_state[key]
             
-            # Set all parameters
+            # Set all parameters (including start time)
             st.session_state.num_vehicles = 2
             st.session_state.vehicle_capacity = 200
             st.session_state.service_time = 2
