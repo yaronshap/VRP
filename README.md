@@ -2,16 +2,14 @@
 
 A web-based Vehicle Routing Problem with Time Windows (VRPTW) solver using PyVRP and Streamlit.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-app-url.streamlit.app)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://vrp-app.streamlit.app)
 
 ## Features
 
 - 📊 **Interactive Web Interface**: Upload location data and configure parameters through an intuitive UI
 - 🗺️ **Map Visualization**: View locations and optimized routes on interactive maps
-- ⚡ **Powerful Optimization**: Built on PyVRP, a high-performance routing solver
 - 📥 **Export Results**: Download solutions as JSON and interactive HTML maps
-- 🎯 **Preset Examples**: Quick start with pre-configured example problems
-- ⏰ **Multi-day Support**: Configure time windows spanning multiple days
+
 
 ## Quick Start
 
@@ -123,9 +121,4 @@ After solving, you can download:
 
 This project is for educational purposes.
 
-## Support
-
-For questions or issues:
-- Open an issue on GitHub
-- Contact: yaron.shaposhnik@simon.rochester.edu
 
