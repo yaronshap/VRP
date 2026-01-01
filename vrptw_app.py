@@ -250,6 +250,7 @@ if uploaded_file is not None:
             st.session_state.avg_speed_mph = 30
             st.session_state.max_runtime = 60
             st.session_state.num_locations = 0
+            st.session_state.num_locs_input = 0  # Update the widget key
             st.session_state.params_set = True
             st.rerun()
 
@@ -265,6 +266,7 @@ if uploaded_file is not None:
             st.session_state.avg_speed_mph = 30
             st.session_state.max_runtime = 60
             st.session_state.num_locations = 0
+            st.session_state.num_locs_input = 0  # Update the widget key
             st.session_state.params_set = True
             st.rerun()
 
