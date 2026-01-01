@@ -1,7 +1,11 @@
 """
 VRPTW Solver - Streamlit App
 Interactive web application for solving Vehicle Routing Problems with Time Windows
+Version: 1.0.0
 """
+
+# App version
+APP_VERSION = "1.0.0"
 
 import streamlit as st
 import pandas as pd
@@ -55,6 +59,13 @@ Upload your location data, configure parameters in the sidebar, and get optimize
 """)
 
 # ==================== SIDEBAR ====================
+# Version number at the top
+st.sidebar.markdown(f"""
+    <div style='text-align: center; padding: 5px; margin-bottom: 10px; background-color: #f0f2f6; border-radius: 5px;'>
+        <small style='color: #666;'>Version {APP_VERSION}</small>
+    </div>
+    """, unsafe_allow_html=True)
+
 st.sidebar.header("⚙️ Problem Configuration")
 
 # File upload in sidebar (moved to top)
