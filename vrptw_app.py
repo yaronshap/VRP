@@ -5,7 +5,7 @@ Version: 1.0.9
 """
 
 # App version
-APP_VERSION = "1.0.10"
+APP_VERSION = "1.0.11"
 
 import streamlit as st
 import pandas as pd
@@ -106,6 +106,18 @@ if uploaded_file is not None:
     # Update session state if widget value changed
     if num_locations != st.session_state.get('num_locations', 0):
         st.session_state.num_locations = num_locations
+    
+    # View Locations button
+    view_locations_button = st.sidebar.button(
+        "📍 View Locations", 
+        use_container_width=True,
+        help="Display location map and data table"
+    )
+    
+    # Handle button click
+    if view_locations_button:
+        st.session_state.show_locations = True
+        st.session_state.current_view = 'locations'
 else:
     num_locations = 0
 
@@ -249,11 +261,11 @@ if uploaded_file is not None:
     if st.sidebar.button("Question 2.2, 1+2", use_container_width=True, help="Single vehicle, 50 locations, 2-min service"):
         from datetime import time
         
-        # Clear solution and switch to locations view
+        # Clear solution and hide locations view
         st.session_state.solution_data = None
         st.session_state.solution_json = None
         st.session_state.solution_html = None
-        st.session_state.current_view = 'locations'
+        st.session_state.show_locations = False
         
         # Clear widget keys so they can be reset
         for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
@@ -281,11 +293,11 @@ if uploaded_file is not None:
         if st.sidebar.button("Question 2.2 3 (5 cars)", use_container_width=True, help="5 vehicles, all locations, 2-min service"):
             from datetime import time
             
-            # Clear solution and switch to locations view
+            # Clear solution and hide locations view
             st.session_state.solution_data = None
             st.session_state.solution_json = None
             st.session_state.solution_html = None
-            st.session_state.current_view = 'locations'
+            st.session_state.show_locations = False
             
             # Clear widget keys so they can be reset
             for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
@@ -312,11 +324,11 @@ if uploaded_file is not None:
         if st.sidebar.button("Question 2.2 3 (2 cars)", use_container_width=True, help="2 vehicles, all locations, 2-min service"):
             from datetime import time
             
-            # Clear solution and switch to locations view
+            # Clear solution and hide locations view
             st.session_state.solution_data = None
             st.session_state.solution_json = None
             st.session_state.solution_html = None
-            st.session_state.current_view = 'locations'
+            st.session_state.show_locations = False
             
             # Clear widget keys so they can be reset
             for key in ['num_vehicles', 'vehicle_capacity', 'service_time', 'tw_start_time', 
@@ -430,126 +442,8 @@ if uploaded_file is not None:
             else:
                 st.success(f"✅ Loaded {len(df_display)} locations{locations_note} (1 depot + {len(df_display)-1} customers)")
                 
-                # View toggle buttons
-                if st.session_state.solution_data is not None:
-                    st.subheader("📊 View")
-                    col1, col2, col3 = st.columns([1, 1, 3])
-                    with col1:
-                        view_locations = st.button("📍 Locations", use_container_width=True)
-                    with col2:
-                        view_solution = st.button("🗺️ Solution", use_container_width=True, type="primary")
-                    
-                    # Initialize view state if not exists
-                    if 'current_view' not in st.session_state:
-                        st.session_state.current_view = 'locations'
-                    
-                    # Update view based on button clicks
-                    if view_locations:
-                        st.session_state.current_view = 'locations'
-                    if view_solution:
-                        st.session_state.current_view = 'solution'
-                    
-                    st.markdown("---")
-                    
-                    # Display appropriate view
-                    if st.session_state.current_view == 'solution':
-                        # Display solution
-                        if st.session_state.solution_data['feasible']:
-                            st.success("✅ Solution Found!")
-                            
-                            # Summary metrics
-                            st.subheader("📊 Solution Summary")
-                            col1, col2, col3, col4 = st.columns(4)
-                            
-                            with col1:
-                                st.metric("Routes", st.session_state.solution_data['num_routes'])
-                            with col2:
-                                st.metric("Total Distance", f"{st.session_state.solution_data['total_distance']:.1f} mi")
-                            with col3:
-                                st.metric("Total Duration", f"{st.session_state.solution_data['total_duration']//60}h {st.session_state.solution_data['total_duration']%60}m")
-                            with col4:
-                                st.metric("Customers Served", sum(len(r['visits']) for r in st.session_state.solution_data['routes']))
-                            
-                            # Route details
-                            st.subheader("🗺️ Route Details")
-                            for i, route in enumerate(st.session_state.solution_data['routes'], 1):
-                                with st.expander(f"Route {i}: {len(route['visits'])} customers, {route['distance']:.1f} miles"):
-                                    st.write(f"**Duration:** {route['duration']//60}h {route['duration']%60}m")
-                                    st.write(f"**Path:** {' → '.join(route['locations'])}")
-                            
-                            # Display map
-                            st.subheader("🗺️ Interactive Solution Map")
-                            components.html(st.session_state.solution_html, height=600, scrolling=True)
-                            
-                            # Download buttons
-                            st.subheader("💾 Download Results")
-                            col1, col2 = st.columns(2)
-                            
-                            with col1:
-                                st.download_button(
-                                    label="📄 Download JSON",
-                                    data=st.session_state.solution_json,
-                                    file_name="vrptw_solution.json",
-                                    mime="application/json",
-                                    use_container_width=True
-                                )
-                            
-                            with col2:
-                                st.download_button(
-                                    label="🗺️ Download Map (HTML)",
-                                    data=st.session_state.solution_html,
-                                    file_name="vrptw_map.html",
-                                    mime="text/html",
-                                    use_container_width=True
-                                )
-                    else:
-                        # Display location map (current view)
-                        st.subheader("📍 Location Map")
-                        
-                        # Create and display location visualization
-                        import folium
-                        from streamlit_folium import folium_static
-                        
-                        # Calculate center of map
-                        center_lat = df_display['latitude'].mean()
-                        center_lon = df_display['longitude'].mean()
-                        
-                        # Create map
-                        m = folium.Map(
-                            location=[center_lat, center_lon],
-                            zoom_start=11,
-                            tiles='OpenStreetMap'
-                        )
-                        
-                        # Add depot marker (first location) with special icon
-                        folium.Marker(
-                            location=[df_display.iloc[0]['latitude'], df_display.iloc[0]['longitude']],
-                            popup=f"<b>🏠 DEPOT</b><br>{df_display.iloc[0]['name']}<br>{df_display.iloc[0]['address']}",
-                            tooltip="Depot (Start/End Point)",
-                            icon=folium.Icon(color='red', icon='home', prefix='fa')
-                        ).add_to(m)
-                        
-                        # Add customer markers (remaining locations)
-                        for idx in range(1, len(df_display)):
-                            folium.CircleMarker(
-                                location=[df_display.iloc[idx]['latitude'], df_display.iloc[idx]['longitude']],
-                                radius=6,
-                                popup=f"<b>Customer {idx}</b><br>{df_display.iloc[idx]['name']}<br>{df_display.iloc[idx]['address']}",
-                                tooltip=f"Customer {idx}: {df_display.iloc[idx]['name']}",
-                                color='blue',
-                                fill=True,
-                                fillColor='blue',
-                                fillOpacity=0.6
-                            ).add_to(m)
-                        
-                        # Display the map
-                        folium_static(m, width=800, height=500)
-                        
-                        # Show data preview
-                        with st.expander(f"📋 Data Table ({len(df_display)} locations)"):
-                            st.dataframe(df_display, use_container_width=True)
-                else:
-                    # No solution yet, just show locations
+                # Only show location map if user clicked "View Locations" button
+                if st.session_state.get('show_locations', False):
                     st.subheader("📍 Location Map")
                     
                     import folium
@@ -566,7 +460,7 @@ if uploaded_file is not None:
                         tiles='OpenStreetMap'
                     )
                     
-                    # Add depot marker
+                    # Add depot marker (first location) with special icon
                     folium.Marker(
                         location=[df_display.iloc[0]['latitude'], df_display.iloc[0]['longitude']],
                         popup=f"<b>🏠 DEPOT</b><br>{df_display.iloc[0]['name']}<br>{df_display.iloc[0]['address']}",
@@ -574,7 +468,7 @@ if uploaded_file is not None:
                         icon=folium.Icon(color='red', icon='home', prefix='fa')
                     ).add_to(m)
                     
-                    # Add customer markers
+                    # Add customer markers (remaining locations)
                     for idx in range(1, len(df_display)):
                         folium.CircleMarker(
                             location=[df_display.iloc[idx]['latitude'], df_display.iloc[idx]['longitude']],
@@ -594,13 +488,64 @@ if uploaded_file is not None:
                     with st.expander(f"📋 Data Table ({len(df_display)} locations)"):
                         st.dataframe(df_display, use_container_width=True)
                 
+                # Display solution if available and not showing locations
+                if st.session_state.solution_data is not None and not st.session_state.get('show_locations', False):
+                    if st.session_state.solution_data['feasible']:
+                        st.success("✅ Solution Found!")
+                        
+                        # Summary metrics
+                        st.subheader("📊 Solution Summary")
+                        col1, col2, col3, col4 = st.columns(4)
+                        
+                        with col1:
+                            st.metric("Routes", st.session_state.solution_data['num_routes'])
+                        with col2:
+                            st.metric("Total Distance", f"{st.session_state.solution_data['total_distance']:.1f} mi")
+                        with col3:
+                            st.metric("Total Duration", f"{st.session_state.solution_data['total_duration']//60}h {st.session_state.solution_data['total_duration']%60}m")
+                        with col4:
+                            st.metric("Customers Served", sum(len(r['visits']) for r in st.session_state.solution_data['routes']))
+                        
+                        # Route details
+                        st.subheader("🗺️ Route Details")
+                        for i, route in enumerate(st.session_state.solution_data['routes'], 1):
+                            with st.expander(f"Route {i}: {len(route['visits'])} customers, {route['distance']:.1f} miles"):
+                                st.write(f"**Duration:** {route['duration']//60}h {route['duration']%60}m")
+                                st.write(f"**Path:** {' → '.join(route['locations'])}")
+                        
+                        # Display map
+                        st.subheader("🗺️ Interactive Solution Map")
+                        components.html(st.session_state.solution_html, height=600, scrolling=True)
+                        
+                        # Download buttons
+                        st.subheader("💾 Download Results")
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            st.download_button(
+                                label="📄 Download JSON",
+                                data=st.session_state.solution_json,
+                                file_name="vrptw_solution.json",
+                                mime="application/json",
+                                use_container_width=True
+                            )
+                        
+                        with col2:
+                            st.download_button(
+                                label="🗺️ Download Map (HTML)",
+                                data=st.session_state.solution_html,
+                                file_name="vrptw_map.html",
+                                mime="text/html",
+                                use_container_width=True
+                            )
+                
                 # Check if solve button was clicked
                 if solve_button:
-                    # Clear previous solution and switch to locations view
+                    # Clear previous solution and hide locations view
                     st.session_state.solution_data = None
                     st.session_state.solution_json = None
                     st.session_state.solution_html = None
-                    st.session_state.current_view = 'locations'
+                    st.session_state.show_locations = False  # Hide location map when solving
                     
                     # Validate time window
                     if time_window_end <= time_window_start:
@@ -689,7 +634,15 @@ if uploaded_file is not None:
                                 
                                 # Show detailed message in main area
                                 st.error("❌ No feasible solution found with current parameters!")
-                                st.markdown("""
+                                
+                                # Calculate time window display values
+                                tw_start_h = time_window_start // 60
+                                tw_start_m = time_window_start % 60
+                                tw_end_h = time_window_end // 60
+                                tw_end_m = time_window_end % 60
+                                num_locs = len(df_display) if num_locations == 0 else num_locations
+                                
+                                st.markdown(f"""
                                 ### 💡 Suggestions to find a solution:
                                 - **Increase the number of vehicles** - More vehicles can handle more locations
                                 - **Increase vehicle capacity** - Each vehicle can serve more customers
@@ -701,16 +654,9 @@ if uploaded_file is not None:
                                 - Vehicles: {num_vehicles}
                                 - Capacity: {vehicle_capacity} customers per vehicle
                                 - Service Time: {service_time} minutes
-                                - Time Window: {time_window_start // 60}h {time_window_start % 60}m to {time_window_end // 60}h {time_window_end % 60}m
-                                - Locations: {len(df_display) if num_locations == 0 else num_locations}
-                                """.format(
-                                    num_vehicles=num_vehicles,
-                                    vehicle_capacity=vehicle_capacity,
-                                    service_time=service_time,
-                                    time_window_start=time_window_start,
-                                    time_window_end=time_window_end,
-                                    num_locations=num_locations
-                                ))
+                                - Time Window: {tw_start_h}h {tw_start_m}m to {tw_end_h}h {tw_end_m}m
+                                - Locations: {num_locs}
+                                """)
                             else:
                                 # Store solution in session state
                                 st.session_state.solution_data = solution
