@@ -122,11 +122,6 @@ After solving, you can download:
 
 This project is for educational purposes.
 
-## Citation
-
-If you use this solver in your research or teaching, please cite:
-- PyVRP: [PyVRP Documentation](https://pyvrp.org/)
-
 ## Support
 
 For questions or issues:
