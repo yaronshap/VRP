@@ -1,11 +1,11 @@
 """
 VRPTW Solver - Streamlit App
 Interactive web application for solving Vehicle Routing Problems with Time Windows
-Version: 1.0.1
+Version: 1.0.2
 """
 
 # App version
-APP_VERSION = "1.0.1"
+APP_VERSION = "1.0.2"
 
 import streamlit as st
 import pandas as pd
@@ -92,14 +92,20 @@ with st.sidebar.expander("ℹ️ CSV Format"):
 
 # Limit locations widget right after file upload (only show if file uploaded)
 if uploaded_file is not None:
+    # Get default value from session state or preset
+    default_num_locations = st.session_state.get('num_locations', 0)
+    
     num_locations = st.sidebar.number_input(
         "Limit Locations (0 = all)",
         min_value=0,
         max_value=1000,
-        value=st.session_state.get('num_locations', 0),
-        help="Use only first N locations (0 = use all)",
-        key="num_locations"
+        value=default_num_locations,
+        help="Use only first N locations (0 = use all)"
     )
+    
+    # Update session state if widget value changed
+    if num_locations != st.session_state.get('num_locations', 0):
+        st.session_state.num_locations = num_locations
 else:
     num_locations = 0
 
