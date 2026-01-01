@@ -5,7 +5,7 @@ Version: 1.0.9
 """
 
 # App version
-APP_VERSION = "1.0.9"
+APP_VERSION = "1.0.10"
 
 import streamlit as st
 import pandas as pd
@@ -684,15 +684,33 @@ if uploaded_file is not None:
                             
                             # Check if solution is feasible
                             if not solution['feasible']:
-                                st.error("❌ No feasible solution found!")
+                                # Show error in sidebar
+                                status_placeholder.error("❌ No solution found!")
+                                
+                                # Show detailed message in main area
+                                st.error("❌ No feasible solution found with current parameters!")
                                 st.markdown("""
-                                ### Suggestions:
-                                - Increase the number of vehicles
-                                - Increase vehicle capacity
-                                - Extend the time window
-                                - Reduce service time
-                                - Use fewer locations
-                                """)
+                                ### 💡 Suggestions to find a solution:
+                                - **Increase the number of vehicles** - More vehicles can handle more locations
+                                - **Increase vehicle capacity** - Each vehicle can serve more customers
+                                - **Extend the time window** - More time allows for longer routes
+                                - **Reduce service time** - Faster service means more customers can be visited
+                                - **Use fewer locations** - Reduce the problem size
+                                
+                                ### 📊 Current Parameters:
+                                - Vehicles: {num_vehicles}
+                                - Capacity: {vehicle_capacity} customers per vehicle
+                                - Service Time: {service_time} minutes
+                                - Time Window: {time_window_start // 60}h {time_window_start % 60}m to {time_window_end // 60}h {time_window_end % 60}m
+                                - Locations: {len(df_display) if num_locations == 0 else num_locations}
+                                """.format(
+                                    num_vehicles=num_vehicles,
+                                    vehicle_capacity=vehicle_capacity,
+                                    service_time=service_time,
+                                    time_window_start=time_window_start,
+                                    time_window_end=time_window_end,
+                                    num_locations=num_locations
+                                ))
                             else:
                                 # Store solution in session state
                                 st.session_state.solution_data = solution
